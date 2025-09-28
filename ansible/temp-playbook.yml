@@ -1,0 +1,10 @@
+---
+ansible:
+    image: williamyeh/ansible:ubuntu16.04-onbuild
+    container_name: devops_ansible
+    volumes:
+      - ./ansible:/ansible
+    networks:
+      - devops_net
+    entrypoint: tail -f /dev/null
+
