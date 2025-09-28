@@ -1,0 +1,83 @@
+version: "3.9"
+
+services:
+  web:
+    image: nginx:latest
+    container_name: devops_web
+    ports:
+      - "8082:80"
+    volumes:
+      - ./html:/usr/share/nginx/html:ro
+    networks:
+      - devops_net
+    restart: always
+
+  app:
+    build: ./app
+    container_name: devops_app
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./app:/usr/src/app
+    depends_on:
+      - db
+    networks:
+      - devops_net
+    restart: always
+
+  db:
+    image: postgres:15
+    container_name: devops_db
+    environment:
+      POSTGRES_USER: devops
+      POSTGRES_PASSWORD: devops123
+      POSTGRES_DB: devops_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - devops_net
+    restart: always
+
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: devops_jenkins
+    ports:
+      - "8081:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+    networks:
+      - devops_net
+    restart: always
+
+  terraform:
+    image: hashicorp/terraform:latest
+    container_name: devops_terraform
+    working_dir: /workspace
+    volumes:
+      - ./terraform:/workspace
+    networks:
+      - devops_net
+
+  ansible:
+    image: williamyeh/ansible:ubuntu16.04-onbuild
+    container_name: devops_ansible
+    volumes:
+      - ./ansible:/ansible
+    networks:
+      - devops_net
+    entrypoint: tail -f /dev/null
+
+volumes:
+  db_data:
+  jenkins_home:
+
+networks:
+  devops_net:
+    driver: bridge
+
