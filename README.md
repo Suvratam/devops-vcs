@@ -1,7 +1,6 @@
 # devops-vcs
-
 Managed a DevOps project using Git for version control, implementing proper commits and structured branching strategies (main, dev, feature) to ensure code quality an collaboration.
----
+***
 
 ## 📌 Overview
 This is a version-controlled DevOps project managed with Git best practices.
